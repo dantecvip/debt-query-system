@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="DebtQuerySystem.Api/DebtQuerySystem.Api.csproj" />
+  <Project Path="DebtQuerySystem.Application/DebtQuerySystem.Application.csproj" />
+  <Project Path="DebtQuerySystem.Domain/DebtQuerySystem.Domain.csproj" />
+  <Project Path="DebtQuerySystem.Tests/DebtQuerySystem.Tests.csproj" />
+</Solution>
