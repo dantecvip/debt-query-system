@@ -1,13 +1,11 @@
-﻿using DebtQuerySystem.Application.WeatherForecast;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using DebtQuerySystem.Application.Queries.WeatherForecast;
 
-namespace DebtQuerySystem.Api.Endpoints
+namespace DebtQuerySystem.Api.Endpoints;
+
+public static class WeatherForecastEndpoints
 {
-    public static class WeatherForecastEndpoints
+    internal static void MapWeatherForecastEndpoints(this WebApplication app)
     {
-        internal static void MapWeatherForecastEndpoints(this WebApplication app)
-        {
-            app.MapGet("/weatherforecast", GetWeatherForecastUseCase.Action).WithName(nameof(GetWeatherForecastUseCase));
-        }
+        app.MapGet("/weatherforecast", GetWeatherForecastUseCase.Action).WithName(nameof(GetWeatherForecastUseCase));
     }
 }
