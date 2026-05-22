@@ -23,6 +23,11 @@ public static class InfrastructureDependencyInjection
                 "Connection string não configurada.")
             .ValidateOnStart();
 
+        services.AddOptions<CacheSettings>().Bind(configuration.GetSection(CacheSettings.SectionName))
+            .Validate(s => !string.IsNullOrWhiteSpace(s.ConnectionString),
+                "Connection string não configurada.")
+            .ValidateOnStart();
+
         services.AddDbContext<DebtQueryDbContext>((provider, options) =>
         {
             var databaseSettings = provider

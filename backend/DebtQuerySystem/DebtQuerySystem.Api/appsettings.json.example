@@ -9,7 +9,7 @@
     "ConnectionString": "Host=localhost;Port=5545;Database=debtquery;Username=postgres;Password=*Password123"
   },
   "CacheSettings": {
-    "ConnectionString": "localhost:6379",
+    "ConnectionString": "localhost:6385",
     "InstanceName": "DebtQuerySystem:",
     "DefaultExpirationMinutes": 20
   },
