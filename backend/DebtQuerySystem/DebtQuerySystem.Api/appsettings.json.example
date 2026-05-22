@@ -5,5 +5,8 @@
       "Microsoft.AspNetCore": "Warning"
     }
   },
+  "DatabaseSettings": {
+    "ConnectionString": "Host=localhost;Port=5545;Database=debtquery;Username=myusername;Password=mypassword123"
+  },
   "AllowedHosts": "*"
 }

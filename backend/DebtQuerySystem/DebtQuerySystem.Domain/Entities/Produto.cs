@@ -4,21 +4,26 @@ public class Produto
 {
     public Guid Id { get; private set; }
     public Guid ClienteId { get; private set; }
-    public string Descricao { get; private set; }
-    public readonly List<Parcela> _parcelas = [];
+    public string Descricao { get; private set; } = null!;
+    private readonly List<Parcela> _parcelas = [];
     public IReadOnlyCollection<Parcela> Parcelas => _parcelas;
 
-    protected Produto()
+    public Parcela AdicionarParcela(
+        int numero,
+        decimal valorOriginal,
+        DateOnly vencimento,
+        decimal taxaAdministrativa)
     {
-        Descricao = string.Empty;
-        _parcelas = [];
+        var parcela = new Parcela(Id, numero, valorOriginal, vencimento, taxaAdministrativa);
+        _parcelas.Add(parcela);
+        return parcela;
     }
 
-    public Produto(Guid clienteId, string descricao, List<Parcela> parcelas)
+    protected Produto() { }
+
+    public Produto(string descricao)
     {
         Id = Guid.NewGuid();
-        ClienteId = clienteId;
         Descricao = descricao;
-        _parcelas = parcelas;
     }
 }
