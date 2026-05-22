@@ -6,7 +6,7 @@ namespace DebtQuerySystem.Infrastructure.Database;
 public class DebtQueryDbContext(DbContextOptions<DebtQueryDbContext> options) : DbContext(options)
 {
     public DbSet<Cliente> Clientes => Set<Cliente>();
-    public DbSet<Produto> Produtos => Set<Produto>();
+    public DbSet<Divida> Dividas => Set<Divida>();
     public DbSet<Parcela> Parcelas => Set<Parcela>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

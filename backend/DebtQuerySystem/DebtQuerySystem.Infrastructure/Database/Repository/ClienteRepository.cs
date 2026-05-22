@@ -10,7 +10,7 @@ public class ClienteRepository(DebtQueryDbContext context) : IClienteRepository
     {
         return await context.Clientes
             .AsNoTracking()
-            .Include(c => c.Produtos)
+            .Include(c => c.Dividas)
             .ThenInclude(p => p.Parcelas)
             .FirstOrDefaultAsync(c => c.Cpf == cpf);
     }

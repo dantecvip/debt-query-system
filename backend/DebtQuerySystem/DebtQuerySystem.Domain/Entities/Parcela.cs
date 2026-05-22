@@ -3,7 +3,7 @@
 public class Parcela
 {
     public Guid Id { get; private set; }
-    public Guid ProdutoId { get; private set; }
+    public Guid DividaId { get; private set; }
     public int ParcelaNumero { get; private set; }
     public decimal ValorOriginal { get; private set; }
     public DateOnly DataVencimento { get; private set; }
@@ -31,7 +31,7 @@ public class Parcela
 
     protected Parcela() { }
 
-    public Parcela(Guid produtoId, int parcelaNumero, decimal valorOriginal, DateOnly dataVencimento, decimal taxaAdministrativa)
+    public Parcela(Guid dividaId, int parcelaNumero, decimal valorOriginal, DateOnly dataVencimento, decimal taxaAdministrativa)
     {
         if (valorOriginal <= 0)
             throw new ArgumentException("Valor original deve ser maior que zero.", nameof(valorOriginal));
@@ -46,7 +46,7 @@ public class Parcela
             throw new ArgumentException("Data de vencimento deve ser uma data válida.", nameof(dataVencimento));
 
         Id = Guid.NewGuid();
-        ProdutoId = produtoId;
+        DividaId = dividaId;
         ParcelaNumero = parcelaNumero;
         ValorOriginal = valorOriginal;
         DataVencimento = dataVencimento;

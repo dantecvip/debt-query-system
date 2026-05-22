@@ -58,35 +58,7 @@ namespace DebtQuerySystem.Infrastructure.Migrations
                     b.ToTable("Clientes", (string)null);
                 });
 
-            modelBuilder.Entity("DebtQuerySystem.Domain.Entities.Parcela", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateOnly>("DataVencimento")
-                        .HasColumnType("date");
-
-                    b.Property<int>("ParcelaNumero")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("ProdutoId")
-                        .HasColumnType("uuid");
-
-                    b.Property<decimal>("TaxaAdministrativa")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("ValorOriginal")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProdutoId");
-
-                    b.ToTable("Parcelas", (string)null);
-                });
-
-            modelBuilder.Entity("DebtQuerySystem.Domain.Entities.Produto", b =>
+            modelBuilder.Entity("DebtQuerySystem.Domain.Entities.Divida", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -104,33 +76,61 @@ namespace DebtQuerySystem.Infrastructure.Migrations
 
                     b.HasIndex("ClienteId");
 
-                    b.ToTable("Produtos", (string)null);
+                    b.ToTable("Dividas", (string)null);
                 });
 
             modelBuilder.Entity("DebtQuerySystem.Domain.Entities.Parcela", b =>
                 {
-                    b.HasOne("DebtQuerySystem.Domain.Entities.Produto", null)
-                        .WithMany("Parcelas")
-                        .HasForeignKey("ProdutoId")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("DataVencimento")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("DividaId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("ParcelaNumero")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("TaxaAdministrativa")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ValorOriginal")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DividaId");
+
+                    b.ToTable("Parcelas", (string)null);
+                });
+
+            modelBuilder.Entity("DebtQuerySystem.Domain.Entities.Divida", b =>
+                {
+                    b.HasOne("DebtQuerySystem.Domain.Entities.Cliente", null)
+                        .WithMany("Dividas")
+                        .HasForeignKey("ClienteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("DebtQuerySystem.Domain.Entities.Produto", b =>
+            modelBuilder.Entity("DebtQuerySystem.Domain.Entities.Parcela", b =>
                 {
-                    b.HasOne("DebtQuerySystem.Domain.Entities.Cliente", null)
-                        .WithMany("Produtos")
-                        .HasForeignKey("ClienteId")
+                    b.HasOne("DebtQuerySystem.Domain.Entities.Divida", null)
+                        .WithMany("Parcelas")
+                        .HasForeignKey("DividaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
             modelBuilder.Entity("DebtQuerySystem.Domain.Entities.Cliente", b =>
                 {
-                    b.Navigation("Produtos");
+                    b.Navigation("Dividas");
                 });
 
-            modelBuilder.Entity("DebtQuerySystem.Domain.Entities.Produto", b =>
+            modelBuilder.Entity("DebtQuerySystem.Domain.Entities.Divida", b =>
                 {
                     b.Navigation("Parcelas");
                 });

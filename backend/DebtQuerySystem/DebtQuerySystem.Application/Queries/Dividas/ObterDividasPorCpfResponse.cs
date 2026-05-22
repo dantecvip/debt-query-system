@@ -1,16 +1,16 @@
 ﻿namespace DebtQuerySystem.Application.Queries.Dividas;
 
-public record ObterDividasPorCpfResponse(string NomeCliente, string CpfCliente, IList<ProdutoAgrupadoDto> Produtos)
+public record ObterDividasPorCpfResponse(string NomeCliente, string CpfCliente, IList<DividaAgrupadaDto> Dividas)
 {
     public decimal ValorTotalConsolidado => 
-        Produtos.Sum(x => x.ValorTotalProdutoAtualizado);
+        Dividas.Sum(x => x.ValorTotalDividaAtualizada);
 }
 
-public record ProdutoAgrupadoDto(
-    string ProdutoNome,
+public record DividaAgrupadaDto(
+    string DividaDescricao,
     List<ParcelaDetalheDto> Parcelas)
 {
-    public decimal ValorTotalProdutoAtualizado =>
+    public decimal ValorTotalDividaAtualizada =>
         Parcelas.Sum(x => x.ValorTotalAtualizado);
 }
 
