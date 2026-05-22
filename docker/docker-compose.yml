@@ -1,6 +1,7 @@
 services:
   postgres:
     image: postgres:16
+    container_name: debt_system_postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init-scripts:/docker-entrypoint-initdb.d
@@ -15,6 +16,28 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - debt_system_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: debt_system_redis
+    ports:
+      - "6385:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - debt_system_network
 
 volumes:
   postgres_data:
+  redis_data:
+
+networks:
+  debt_system_network:
+    driver: bridge

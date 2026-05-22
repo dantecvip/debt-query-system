@@ -1,8 +1,10 @@
 ﻿using DebtQuerySystem.Domain.Interfaces;
 using DebtQuerySystem.Infrastructure.Database;
 using DebtQuerySystem.Infrastructure.Database.Repository;
+using DebtQuerySystem.Infrastructure.Services;
 using DebtQuerySystem.Infrastructure.Settings;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -31,7 +33,17 @@ public static class InfrastructureDependencyInjection
             options.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
         });
 
+        services.AddOptions<RedisCacheOptions>()
+            .Configure<IOptions<CacheSettings>>((options, cacheSettings) =>
+            {
+                options.Configuration = cacheSettings.Value.ConnectionString;
+                options.InstanceName = cacheSettings.Value.InstanceName;
+            });
+
+        services.AddStackExchangeRedisCache(_ => { });
+
         services.AddScoped<IClienteRepository, ClienteRepository>();
+        services.AddScoped<IDistributedCacheService, DistributedCacheService>();
 
         return services;
     }
