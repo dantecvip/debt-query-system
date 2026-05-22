@@ -6,7 +6,8 @@
     }
   },
   "DatabaseSettings": {
-    "ConnectionString": "Host=localhost;Port=5545;Database=debtquery;Username=postgres;Password=*Password123"
+    "ConnectionString": "Host=localhost;Port=5545;Database=debtquery;Username=postgres;Password=*Password123",
+    "SeedPath": "BASE CLIENTES_DIVIDAS.xlsx"
   },
   "AllowedHosts": "*"
 }
