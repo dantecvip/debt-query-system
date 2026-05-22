@@ -7,14 +7,14 @@ public class Cliente
     public string Cpf { get; private set; } = null!;
     public string Email { get; private set; } = null!;
     public string Telefone { get; private set; } = null!;
-    private readonly List<Produto> _produtos = [];
-    public IReadOnlyCollection<Produto> Produtos => _produtos;
+    private readonly List<Divida> _dividas = [];
+    public IReadOnlyCollection<Divida> Dividas => _dividas;
 
-    public Produto AdicionarProduto(string descricao)
+    public Divida AdicionarDivida(string descricao)
     {
-        var produto = new Produto(descricao);
-        _produtos.Add(produto);
-        return produto;
+        var divida = new Divida(descricao);
+        _dividas.Add(divida);
+        return divida;
     }
 
     protected Cliente() { }

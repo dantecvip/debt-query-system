@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DebtQuerySystem.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,7 +17,7 @@ namespace DebtQuerySystem.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Nome = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    Cpf = table.Column<string>(type: "character varying(11)", maxLength: 11, nullable: false),
+                    Cpf = table.Column<string>(type: "character(11)", fixedLength: true, maxLength: 11, nullable: false),
                     Email = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     Telefone = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false)
                 },
@@ -27,7 +27,7 @@ namespace DebtQuerySystem.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Produtos",
+                name: "Dividas",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -36,9 +36,9 @@ namespace DebtQuerySystem.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Produtos", x => x.Id);
+                    table.PrimaryKey("PK_Dividas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Produtos_Clientes_ClienteId",
+                        name: "FK_Dividas_Clientes_ClienteId",
                         column: x => x.ClienteId,
                         principalTable: "Clientes",
                         principalColumn: "Id",
@@ -50,7 +50,7 @@ namespace DebtQuerySystem.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    ProdutoId = table.Column<Guid>(type: "uuid", nullable: false),
+                    DividaId = table.Column<Guid>(type: "uuid", nullable: false),
                     ParcelaNumero = table.Column<int>(type: "integer", nullable: false),
                     ValorOriginal = table.Column<decimal>(type: "numeric(18,2)", nullable: false),
                     DataVencimento = table.Column<DateOnly>(type: "date", nullable: false),
@@ -60,9 +60,9 @@ namespace DebtQuerySystem.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Parcelas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Parcelas_Produtos_ProdutoId",
-                        column: x => x.ProdutoId,
-                        principalTable: "Produtos",
+                        name: "FK_Parcelas_Dividas_DividaId",
+                        column: x => x.DividaId,
+                        principalTable: "Dividas",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -74,14 +74,14 @@ namespace DebtQuerySystem.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Parcelas_ProdutoId",
-                table: "Parcelas",
-                column: "ProdutoId");
+                name: "IX_Dividas_ClienteId",
+                table: "Dividas",
+                column: "ClienteId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Produtos_ClienteId",
-                table: "Produtos",
-                column: "ClienteId");
+                name: "IX_Parcelas_DividaId",
+                table: "Parcelas",
+                column: "DividaId");
         }
 
         /// <inheritdoc />
@@ -91,7 +91,7 @@ namespace DebtQuerySystem.Infrastructure.Migrations
                 name: "Parcelas");
 
             migrationBuilder.DropTable(
-                name: "Produtos");
+                name: "Dividas");
 
             migrationBuilder.DropTable(
                 name: "Clientes");

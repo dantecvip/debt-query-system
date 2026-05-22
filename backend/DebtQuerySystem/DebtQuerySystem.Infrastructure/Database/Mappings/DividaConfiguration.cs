@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DebtQuerySystem.Infrastructure.Database.Mappings;
 
-public class ProdutoConfiguration : IEntityTypeConfiguration<Produto>
+public class DividaConfiguration : IEntityTypeConfiguration<Divida>
 {
-    public void Configure(EntityTypeBuilder<Produto> builder)
+    public void Configure(EntityTypeBuilder<Divida> builder)
     {
-        builder.ToTable("Produtos");
+        builder.ToTable("Dividas");
 
         builder.HasKey(p => p.Id);
 
@@ -18,7 +18,7 @@ public class ProdutoConfiguration : IEntityTypeConfiguration<Produto>
 
         builder.HasMany(p => p.Parcelas)
             .WithOne()
-            .HasForeignKey(parcela => parcela.ProdutoId)
+            .HasForeignKey(parcela => parcela.DividaId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.Navigation(c => c.Parcelas)

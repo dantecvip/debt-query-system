@@ -1,27 +1,22 @@
 ﻿namespace DebtQuerySystem.Application.Queries.Dividas;
 
-public record ObterDividasPorCpfResponse(string NomeCliente, string CpfCliente, IList<ProdutoAgrupadoDto> Produtos)
+public record ClienteDebitosResult(string Nome, string Cpf, List<DividaResult> Dividas)
 {
     public decimal ValorTotalConsolidado => 
-        Produtos.Sum(x => x.ValorTotalProdutoAtualizado);
+        Dividas.Sum(x => x.ValorTotalDividaAtualizada);
 }
 
-public record ProdutoAgrupadoDto(
-    string ProdutoNome,
-    List<ParcelaDetalheDto> Parcelas)
+public record DividaResult(string Descricao, List<ParcelaResult> Parcelas)
 {
-    public decimal ValorTotalProdutoAtualizado =>
+    public decimal ValorTotalDividaAtualizada =>
         Parcelas.Sum(x => x.ValorTotalAtualizado);
 }
 
-public class ParcelaDetalheDto
-{
-    public int ParcelaNumero { get; set; }
-    public DateTime DataVencimento { get; set; }
-    public decimal ValorOriginal { get; set; }
-    public decimal ValorMulta { get; set; }
-    public decimal ValorJuros { get; set; }
-    public decimal TaxaAdministrativa { get; set; }
-    public int DiasAtraso { get; set; }
-    public decimal ValorTotalAtualizado { get; set; }
-}
+public record ParcelaResult(
+    int NumeroParcela,
+    decimal ValorOriginal,
+    DateOnly DataVencimento,
+    int DiasAtraso,
+    decimal ValorMulta,
+    decimal ValorJuros,
+    decimal ValorTotalAtualizado);

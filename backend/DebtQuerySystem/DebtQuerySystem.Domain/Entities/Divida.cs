@@ -1,6 +1,6 @@
 ﻿namespace DebtQuerySystem.Domain.Entities;
 
-public class Produto
+public class Divida
 {
     public Guid Id { get; private set; }
     public Guid ClienteId { get; private set; }
@@ -19,9 +19,9 @@ public class Produto
         return parcela;
     }
 
-    protected Produto() { }
+    protected Divida() { }
 
-    public Produto(string descricao)
+    public Divida(string descricao)
     {
         Id = Guid.NewGuid();
         Descricao = descricao;

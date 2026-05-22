@@ -14,9 +14,9 @@ public class ParcelaTests
         // Arrange
         var dataVencimento = DateOnly.Parse(dataVencimentoStr);
         var dataReferencia = DateOnly.Parse(dataReferenciaStr);
-        var produtoId = Guid.NewGuid();
+        var dividaId = Guid.NewGuid();
 
-        var divida = new Parcela(produtoId, 1, 100.00m, dataVencimento, 1m);
+        var divida = new Parcela(dividaId, 1, 100.00m, dataVencimento, 1m);
 
         // Act
         int diasObtidos = divida.CalcularDiasAtraso(dataReferencia);
@@ -35,8 +35,8 @@ public class ParcelaTests
     {
         // Arrange
         var dataVencimento = DateOnly.FromDateTime(DateTime.Today.AddDays(diasAtraso > 0 ? diasAtraso * -1 : 0));
-        var produtoId = Guid.NewGuid();
-        var parcela = new Parcela(produtoId, 1, valorOriginal, dataVencimento, 1m);
+        var dividaId = Guid.NewGuid();
+        var parcela = new Parcela(dividaId, 1, valorOriginal, dataVencimento, 1m);
 
         // Act
         decimal valorMultaObtido = parcela.ValorMulta;
@@ -56,8 +56,8 @@ public class ParcelaTests
     {
         // Arrange
         var dataVencimento = DateOnly.FromDateTime(DateTime.Today.AddDays(diasAtraso > 0 ? diasAtraso * -1 : 0));
-        var produtoId = Guid.NewGuid();
-        var parcela = new Parcela(produtoId, 1, valorOriginal, dataVencimento, 1m);
+        var dividaId = Guid.NewGuid();
+        var parcela = new Parcela(dividaId, 1, valorOriginal, dataVencimento, 1m);
 
         // Act
         decimal valorJurosObtido = parcela.ValorJuros;
@@ -77,8 +77,8 @@ public class ParcelaTests
     {
         // Arrange
         var dataVencimento = DateOnly.FromDateTime(DateTime.Today.AddDays(diasAtraso > 0 ? diasAtraso * -1 : 0));
-        var produtoId = Guid.NewGuid();
-        var parcela = new Parcela(produtoId, 1, valorOriginal, dataVencimento, taxaAdministrativa);
+        var dividaId = Guid.NewGuid();
+        var parcela = new Parcela(dividaId, 1, valorOriginal, dataVencimento, taxaAdministrativa);
 
         // Act
         decimal valorTotalObtido = parcela.ValorTotalAtualizado;

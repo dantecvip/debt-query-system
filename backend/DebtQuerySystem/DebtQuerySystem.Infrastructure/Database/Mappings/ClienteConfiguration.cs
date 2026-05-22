@@ -33,12 +33,12 @@ public class ClienteConfiguration : IEntityTypeConfiguration<Cliente>
             .IsUnique()
             .HasDatabaseName("IX_Clientes_Cpf");
 
-        builder.HasMany(c => c.Produtos)
+        builder.HasMany(c => c.Dividas)
             .WithOne()
             .HasForeignKey(p => p.ClienteId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Navigation(c => c.Produtos)
+        builder.Navigation(c => c.Dividas)
             .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
 }
