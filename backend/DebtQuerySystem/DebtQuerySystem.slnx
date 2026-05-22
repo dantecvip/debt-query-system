@@ -1,8 +1,0 @@
-<Solution>
-  <Project Path="DebtQuerySystem.Api/DebtQuerySystem.Api.csproj" />
-  <Project Path="DebtQuerySystem.Application/DebtQuerySystem.Application.csproj" />
-  <Project Path="DebtQuerySystem.DataSeeder/DebtQuerySystem.DataSeeder.csproj" />
-  <Project Path="DebtQuerySystem.Domain/DebtQuerySystem.Domain.csproj" />
-  <Project Path="DebtQuerySystem.Infrastructure/DebtQuerySystem.Infrastructure.csproj" Id="ee47e096-ede8-4637-8d9d-6a84ef82fd97" />
-  <Project Path="DebtQuerySystem.Tests/DebtQuerySystem.Tests.csproj" />
-</Solution>
