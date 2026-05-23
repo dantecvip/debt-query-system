@@ -6,6 +6,6 @@ public static class WeatherForecastEndpoints
 {
     internal static void MapWeatherForecastEndpoints(this WebApplication app)
     {
-        app.MapGet("/weatherforecast", GetWeatherForecastUseCase.Action).WithName(nameof(GetWeatherForecastUseCase));
+        app.MapGet("/api/v1/weatherforecast", GetWeatherForecastUseCase.Action).WithName(nameof(GetWeatherForecastUseCase));
     }
 }

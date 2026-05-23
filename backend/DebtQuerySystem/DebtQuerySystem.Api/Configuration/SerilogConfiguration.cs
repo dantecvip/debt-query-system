@@ -2,7 +2,7 @@
 
 namespace DebtQuerySystem.Api.Configuration;
 
-public static class LogConfiguration
+public static class SerilogConfiguration
 {
     public static void AddSerilogConfiguration(WebApplicationBuilder builder)
     {

@@ -6,7 +6,7 @@ namespace DebtQuerySystem.Api.Endpoints
     {
         internal static void MapDividasEndpoints(this WebApplication app)
         {
-            app.MapGet("/get-dividas-por-cpf/{cpf}", ObterDividasPorCpfUseCase.Action).WithName(nameof(ObterDividasPorCpfUseCase));
+            app.MapGet("/api/v1/debitos/{cpf}", ObterDividasPorCpfUseCase.Action).WithName(nameof(ObterDividasPorCpfUseCase));
         }
     }
 }

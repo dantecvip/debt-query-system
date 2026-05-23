@@ -212,3 +212,7 @@ FakesAssemblies/
 # Ignore all real appsettings files
 **/appsettings.json
 **/appsettings.*.json
+
+# WatchDog logs
+watchlogs.db
+watchlogs-log.db
