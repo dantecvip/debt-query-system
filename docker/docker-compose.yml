@@ -1,4 +1,61 @@
 services:
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: debt-query-ui/Dockerfile
+    ports:
+      - "4200:80"
+    environment:
+      API_URL: http://localhost:4555/api/v1
+    restart: unless-stopped
+    networks:
+      - debt_system_network
+
+  dataseeder:
+    build:
+      context: ../backend
+      dockerfile: DebtQuerySystem/DebtQuerySystem.DataSeeder/Dockerfile
+    container_name: debt_query_seeder
+    entrypoint: ["dotnet", "DebtQuerySystem.DataSeeder.dll"]
+    environment:
+      DatabaseSettings__ConnectionString: Host=postgres;Port=5432;Database=debtquery;Username=postgres;Password=*Password123
+      ExcelConfiguration__FilePath: "/app/data/BASE CLIENTES_DIVIDAS.xlsx"
+    volumes:
+      - ./DebtQuerySystem.DataSeeder/Data/Seed:/app/data
+    networks:
+      - debt_system_network
+    depends_on:
+      postgres:
+        condition: service_healthy  
+  
+  api:
+    container_name: debt-query-system-api
+    build:
+      context: ../backend
+      dockerfile: DebtQuerySystem/DebtQuerySystem.Api/Dockerfile
+    ports:
+      - "4555:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      RUN_MIGRATIONS: "true"
+      DatabaseSettings__ConnectionString: Host=postgres;Port=5432;Database=debtquery;Username=postgres;Password=*Password123
+      CacheSettings__ConnectionString: redis:6379
+      CacheSettings__InstanceName: "DebtQuerySystem:"
+      CacheSettings__DefaultExpirationMinutes: 20
+      CorsSettings__Origins__0: http://127.0.0.1:4200
+      KeycloakSettings__Authority: http://keycloak:8080/realms/demo
+      KeycloakSettings__Audience: demo-api
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      dataseeder:
+        condition: service_completed_successfully
+    restart: unless-stopped
+    networks:
+      - debt_system_network
+  
   postgres:
     image: postgres:16
     container_name: debt_system_postgres
