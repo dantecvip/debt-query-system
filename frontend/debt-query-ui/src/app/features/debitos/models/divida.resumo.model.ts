@@ -1,6 +1,6 @@
 import { ParcelaModel } from "./parcela.model";
 
-export interface DividaModel {
+export interface DividaResumoModel {
   id: string;
   descricao: string;
   valorOriginalTotal: number;
