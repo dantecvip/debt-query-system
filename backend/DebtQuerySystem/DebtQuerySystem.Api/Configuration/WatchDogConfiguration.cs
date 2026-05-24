@@ -7,7 +7,7 @@ namespace DebtQuerySystem.Api.Configuration;
 
 public static class WatchDogConfiguration
 {
-    public static void AddWatchDog(WebApplicationBuilder builder)
+    public static void AddWatchDogConfiguration(WebApplicationBuilder builder)
     {
         var cfg = builder.Configuration.GetSection(DatabaseSettings.SectionName);
 
@@ -30,7 +30,7 @@ public static class WatchDogConfiguration
         builder.Logging.AddWatchDogLogger();
     }
 
-    public static void UseWatchDog(this WebApplication app)
+    public static void UseWatchDogConfiguration(this WebApplication app)
     {
         app.UseWatchDogExceptionLogger();
         app.UseWatchDog(opt =>
