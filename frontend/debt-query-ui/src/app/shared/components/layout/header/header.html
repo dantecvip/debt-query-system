@@ -1,0 +1,78 @@
+<header>
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top" role="navigation">
+
+        <div class="navbar-brand navbar-brand-container">
+            <img src="assets/images/logo.png"
+                class="navbar-brand" alt="Angular">
+            <a routerLink="/" class="navbar-brand cursor-pointer">
+                Debt Query System
+            </a>
+        </div>
+
+        <button class="navbar-toggler" type="button" (click)="collapsed = !collapsed">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" [class.collapse]="collapsed">
+            <ul class="navbar-nav mr-auto">
+                @if(authenticated)
+                {
+                    <li class="nav-item" routerLinkActive="active">
+                        <a routerLink="/" class="nav-link cursor-pointer">
+                            <fa-icon [icon]="faHome"></fa-icon>Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a routerLink="/debitos/consulta" class="nav-link cursor-pointer">
+                            <fa-icon [icon]="faList"></fa-icon>
+                            Débitos</a>
+                    </li>
+                }
+            </ul>
+
+            <ul class="navbar-nav margin-left-auto">
+                @if(authenticated)
+                {
+                    <li class="nav-item dropdown">
+                        <button
+                            class="nav-link dropdown-toggle cursor-pointer"
+                            id="userMenu"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                        >
+                            <fa-icon [icon]="faUser"></fa-icon>
+                            {{ user?.name }}
+                    </button>
+
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+
+                            <li>
+                                <a routerLink="/perfil" class="dropdown-item">
+                                    <fa-icon [icon]="faList"></fa-icon>
+                                    Perfil
+                                </a>
+                            </li>
+
+                            <li><hr class="dropdown-divider"></li>
+
+                            <li>
+                                <a class="dropdown-item cursor-pointer" (click)="logout()">
+                                    <fa-icon [icon]="faSignOutAlt"></fa-icon>
+                                    Logout
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+                }
+                @else {
+                    <li class="nav-item cursor-pointer" routerLinkActive="active">
+                        <a class="nav-link" (click)="login()">
+                            <fa-icon [icon]="faSignInAlt"></fa-icon>
+                            Login
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </nav>
+</header>
