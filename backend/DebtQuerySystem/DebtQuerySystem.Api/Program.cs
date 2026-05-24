@@ -11,13 +11,15 @@ SerilogConfiguration.AddSerilogConfiguration(builder);
 
 var app = builder.Build();
 
+await app.Services.ApplyMigrationsAsync();
+
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.AddScalarConfiguration();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseCorsConfiguration();
 app.UseSerilogConfiguration();

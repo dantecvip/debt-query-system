@@ -19,6 +19,9 @@ public static class CorsConfiguration
             using var serviceProvider = builder.Services.BuildServiceProvider();
             var corsSettings = serviceProvider.GetRequiredService<IOptions<CorsSettings>>().Value;
 
+            Console.WriteLine("Configurações de CORS:");
+            corsSettings.Origins.ToList().ForEach(origin => Console.WriteLine($"- {origin}"));
+
             options.AddPolicy("frontend", policy =>
             {
                 policy.WithOrigins(corsSettings.Origins)

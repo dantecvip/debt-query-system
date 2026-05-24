@@ -9,12 +9,14 @@ internal class ClienteExcelReader
     {
         var list = new List<ClienteImportRow>();
 
-        var absolutePath = Path.Combine(
-            AppDomain.CurrentDomain.BaseDirectory,
-            "Data",
-            "Seed",
-            filePath
-        );
+        string absolutePath = Path.IsPathRooted(filePath)
+            ? filePath
+            : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Seed", filePath);
+
+        if (!File.Exists(absolutePath))
+        {
+            throw new FileNotFoundException($"[DataSeeder] Arquivo Excel não encontrado no caminho: {absolutePath}");
+        }
 
         using var workbook = new XLWorkbook(absolutePath);
         var sheet = workbook.Worksheets.First();
