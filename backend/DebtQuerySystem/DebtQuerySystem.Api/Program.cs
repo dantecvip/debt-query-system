@@ -8,7 +8,6 @@ builder.Services.AddOpenApi();
 builder.Services.AddInfrastructure(builder.Configuration);
 CorsConfiguration.AddCorsConfiguration(builder);
 SerilogConfiguration.AddSerilogConfiguration(builder);
-WatchDogConfiguration.AddWatchDogConfiguration(builder);
 
 var app = builder.Build();
 
@@ -22,7 +21,6 @@ app.UseHttpsRedirection();
 
 app.UseCorsConfiguration();
 app.UseSerilogConfiguration();
-app.UseWatchDogConfiguration();
 
 app.MapWeatherForecastEndpoints();
 app.MapDividasEndpoints();

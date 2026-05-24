@@ -1,4 +1,6 @@
-﻿using DebtQuerySystem.Domain.Interfaces;
+﻿using DebtQuerySystem.Application.Transformers;
+using DebtQuerySystem.Domain.Entities;
+using DebtQuerySystem.Domain.Interfaces;
 using DebtQuerySystem.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -9,7 +11,36 @@ namespace DebtQuerySystem.Application.Queries.Dividas
 {
     public class ObterDividasPorCpfUseCase
     {
-        public async static Task<Results<Ok<ClienteDebitosResult>, NotFound>> Action(string cpf,
+        public readonly string ActionCompletoEndpointName = "ObterDividasPorCpfCompleto";
+        public readonly string ActionResumidoEndpointName = "ObterDividasPorCpfResumido";
+
+        public async static Task<Results<Ok<ClienteDebitosResult>, NotFound>> ActionCompleto(string cpf,
+            IClienteRepository clienteRepository,
+            IDistributedCacheService cacheService,
+            ILogger<ObterDividasPorCpfUseCase> logger)
+        {
+            var resultado = await ObterDividasPorCpf(cpf, clienteRepository, cacheService, logger);
+
+            if (resultado == null)
+                return TypedResults.NotFound();
+            else
+                return TypedResults.Ok(resultado);
+        }
+
+        public async static Task<Results<Ok<ClienteResumoDebitosResult>, NotFound>> ActionResumido(string cpf,
+            IClienteRepository clienteRepository,
+            IDistributedCacheService cacheService,
+            ILogger<ObterDividasPorCpfUseCase> logger)
+        {
+            var resultado = await ObterDividasPorCpf(cpf, clienteRepository, cacheService, logger);
+
+            if(resultado == null)
+                return TypedResults.NotFound();
+            else
+                return TypedResults.Ok(DividaTransformer.ToClienteResumoDebitosResult(resultado));
+        }
+
+        private static async Task<ClienteDebitosResult?> ObterDividasPorCpf(string cpf,
             IClienteRepository clienteRepository,
             IDistributedCacheService cacheService,
             ILogger<ObterDividasPorCpfUseCase> logger)
@@ -24,7 +55,9 @@ namespace DebtQuerySystem.Application.Queries.Dividas
             {
                 logger.LogInformation("Cache encontrado para o CPF: {Cpf}. Retornando dados do Redis.", cpfLimpo);
 
-                return TypedResults.Ok(JsonSerializer.Deserialize<ClienteDebitosResult>(clienteCacheado));
+                var cliente = JsonSerializer.Deserialize<ClienteDebitosResult>(clienteCacheado);
+
+                return cliente;
             }
 
             logger.LogWarning("Cache não encontrado para o CPF: {Cpf}. Buscando dados no PostgreSQL.", cpfLimpo);
@@ -36,32 +69,14 @@ namespace DebtQuerySystem.Application.Queries.Dividas
             {
                 logger.LogWarning("Cliente com o CPF: {Cpf} não foi encontrado no banco de dados.", cpfLimpo);
 
-                return TypedResults.NotFound();
+                return null;
             }
 
-            var resultado = new ClienteDebitosResult
-                (
-                    clienteDebitosDb.Nome,
-                    clienteDebitosDb.Cpf,
-                    clienteDebitosDb.Dividas.Select(d => new DividaResult
-                    (
-                        d.Descricao,
-                        d.Parcelas.Select(p => new ParcelaResult
-                        (
-                            p.ParcelaNumero,
-                            p.ValorOriginal,
-                            p.DataVencimento,
-                            p.DiasAtraso,
-                            p.ValorMulta,
-                            p.ValorJuros,
-                            p.ValorTotalAtualizado
-                        )).ToList()
-                    )).ToList()
-                );
+            var resultado = DividaTransformer.ToClienteDebitosResult(clienteDebitosDb);
 
             try
             {
-                var jsonParaCache = JsonSerializer.Serialize(resultado);
+                var jsonParaCache = JsonSerializer.Serialize(clienteDebitosDb);
                 await cacheService.SetAsync(cacheKey, jsonParaCache);
                 logger.LogInformation("Dados do CPF: {Cpf} calculados e persistidos no Redis com sucesso.", cpfLimpo);
             }
@@ -72,7 +87,7 @@ namespace DebtQuerySystem.Application.Queries.Dividas
                 logger.LogError(ex, "Falha ao tentar salvar os dados do CPF: {Cpf} no Redis.", cpfLimpo);
             }
 
-            return TypedResults.Ok(resultado);
+            return resultado;
         }
     }
 }
