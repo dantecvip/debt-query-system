@@ -1,0 +1,33 @@
+// Cores Customizadas de Destaque Lateral para KPIs
+.border-left-danger {
+  border-left: 5px solid #dc3545 !important;
+}
+.border-left-warning {
+  border-left: 5px solid #ffc107 !important;
+}
+.border-left-success {
+  border-left: 5px solid #198754 !important;
+}
+
+// Tons de Fundo Suaves (Soft Colors para UX)
+.bg-danger-light {
+  background-color: rgba(220, 53, 69, 0.1);
+}
+.bg-warning-light {
+  background-color: rgba(255, 193, 7, 0.1);
+}
+.bg-success-light {
+  background-color: rgba(25, 135, 84, 0.1);
+}
+
+.text-warning-dark {
+  color: #856404 !important;
+}
+
+.opacity-75 {
+  opacity: 0.75;
+}
+
+// Alinhamentos finos para tabelas do Bootstrap
+.pl-4 { padding-left: 1.5rem !important; }
+.pr-4 { padding-right: 1.5rem !important; }

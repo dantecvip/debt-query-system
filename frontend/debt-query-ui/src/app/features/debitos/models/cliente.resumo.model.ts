@@ -1,6 +1,6 @@
-import { DividaModel } from "./divida.model";
+import { DividaResumoModel } from "./divida.resumo.model";
 
-export interface ClienteModel {
+export interface ClienteResumoModel {
   cpf: string;
   nome: string;
   email: string;
@@ -8,5 +8,5 @@ export interface ClienteModel {
   valorOriginalTotal: number;
   valorBaseAtualizadoTotal: number;
   valorTotalConsolidado: number;
-  dividas: DividaModel[];
+  dividas: DividaResumoModel[];
 }
