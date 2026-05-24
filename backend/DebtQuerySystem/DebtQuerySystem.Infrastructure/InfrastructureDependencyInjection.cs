@@ -3,6 +3,7 @@ using DebtQuerySystem.Infrastructure.Database;
 using DebtQuerySystem.Infrastructure.Database.Repository;
 using DebtQuerySystem.Infrastructure.Services;
 using DebtQuerySystem.Infrastructure.Settings;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Configuration;
@@ -51,5 +52,16 @@ public static class InfrastructureDependencyInjection
         services.AddScoped<IDistributedCacheService, DistributedCacheService>();
 
         return services;
+    }
+
+    public static async Task ApplyMigrationsAsync(this IServiceProvider services)
+    {
+        Console.WriteLine("Aplicando migrações pendentes no banco de dados...");
+
+        using var scope = services.CreateScope();
+
+        var db = scope.ServiceProvider.GetRequiredService<DebtQueryDbContext>();
+
+        await db.Database.MigrateAsync();
     }
 }
