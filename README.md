@@ -98,7 +98,6 @@ Abaixo estão os principais pilares arquiteturais que elevam a maturidade técni
 │       │   ├── 📄 Dockerfile              # Container com suporte gráfico (libgdiplus)
 │       │   ├── 📄 Program.cs             # Ponto de entrada do executável do Seeder
 │       │   ├── 📁 Builder/               # Fábrica de objetos de Domínio
-│       │   ├── 📁 Data/Seed/             # Origem da planilha BASE CLIENTES_DIVIDAS.xlsx
 │       │   ├── 📁 Reader/                # Motor de parsing do Excel (ClosedXML)
 │       │   └── 📁 Runner/                # Orquestrador da carga de dados
 │       │
@@ -120,6 +119,7 @@ Abaixo estão os principais pilares arquiteturais que elevam a maturidade técni
 │   ├── 📄 docker-compose.yml             # Orquestração de todo o ambiente local
 │   ├── 📁 init-scripts/                  # Scripts SQL executados na criação do banco
 │   └── 📁 keycloak/                      # Dump do Realm (demo-realm) e Temas (keywind)
+│   ├── 📁 seed/                          # Origem da planilha BASE CLIENTES_DIVIDAS.xlsx
 │
 └── 📁 frontend/
     └── 📁 debt-query-ui/                 # Aplicação SPA Angular 21
