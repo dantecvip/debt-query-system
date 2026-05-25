@@ -6,9 +6,9 @@ services:
       - "4200:80"
     environment:
       API_URL: http://localhost:4555/api/v1
-      API_URL_PATTERN: "/^(https:\/\/localhost:4555\/api\/v1)(\/.*)?$/i"
+      API_URL_PATTERN: "^(https:\\/\\/localhost:4555\\/api\\/v1)(\\/.*)?$"
       KEYCLOAK_REALM: demo
-      KEYCLOAK_URL: http://keycloak:8080/realms/demo
+      KEYCLOAK_URL: http://localhost:4205
       KEYCLOAK_CLIENT_ID: demo-api
     restart: unless-stopped
     networks:
