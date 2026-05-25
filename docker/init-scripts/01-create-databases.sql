@@ -1,1 +1,2 @@
 CREATE DATABASE debtquery;
+CREATE DATABASE keycloak;
