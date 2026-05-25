@@ -22,9 +22,9 @@ services:
     entrypoint: ["dotnet", "DebtQuerySystem.DataSeeder.dll"]
     environment:
       DatabaseSettings__ConnectionString: Host=postgres;Port=5432;Database=debtquery;Username=postgres;Password=*Password123
-      ExcelConfiguration__FilePath: "/app/data/BASE CLIENTES_DIVIDAS.xlsx"
+      DatabaseSettings__SeedPath: "/app/data/BASE CLIENTES_DIVIDAS.xlsx"
     volumes:
-      - ./DebtQuerySystem.DataSeeder/Data/Seed:/app/data
+      - ./seed:/app/data
     networks:
       - debt_system_network
     depends_on:
