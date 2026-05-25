@@ -172,7 +172,8 @@ cd debt-query-system
 Suba todo o ecossistema com um único comando:
 
 ```bash
-docker compose up --build
+cd docker
+docker compose up -d --build
 ```
 
 O que vai acontecer no seu terminal?
