@@ -165,7 +165,7 @@ Passo a Passo
 Clone o repositório:
 
 ```bash
-git clone [https://github.com/dantecvip/debt-query-system.git](https://github.com/dantecvip/debt-query-system.git)
+git clone https://github.com/dantecvip/debt-query-system.git
 cd debt-query-system
 ```
 
