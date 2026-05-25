@@ -1,0 +1,26 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "DatabaseSettings": {
+    "ConnectionString": "Host=localhost;Port=5545;Database=debtquery;Username=postgres;Password=*Password123"
+  },
+  "KeycloakSettings": {
+    "Authority": "http://localhost:8080/realms/demo",
+    "Audience": "account"
+  },
+  "CacheSettings": {
+    "ConnectionString": "localhost:6385",
+    "InstanceName": "DebtQuerySystem:",
+    "DefaultExpirationMinutes": 20
+  },
+  "CorsSettings": {
+    "Origins": [
+      "http://127.0.0.1:4200"
+    ]
+  }
+}

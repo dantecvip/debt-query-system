@@ -1,0 +1,61 @@
+<div class="container d-flex align-items-center justify-content-center min-vh-75">
+  <div class="row justify-content-center width-100">
+    <div class="col-md-8 col-lg-6 text-center">
+      <div class="display-3 mb-3 text-primary animate-bounce">🏛️</div>
+
+      <h2 class="text-dark font-weight-bold mb-3">Sistema de Gestão de Atualização de Dívidas</h2>
+
+      @if (authenticated) {
+        <p class="text-muted lead mb-4">
+          Consulte débitos de clientes, acesse contratos e acompanhe informações detalhadas sobre
+          dívidas ativas.
+        </p>
+        <div class="d-grid gap-2 d-md-block mb-5">
+          <a
+            routerLink="/debitos/consulta"
+            class="btn btn-primary btn-md px-5 py-3 shadow-sm font-weight-bold tracking-wide"
+          >
+            Consultar Débitos
+          </a>
+        </div>
+      } @else {
+        <div class="text-start">
+
+          <p class="text-muted mb-3">
+            Use as credenciais abaixo para testes no ambiente de autenticação.
+          </p>
+
+          <ul class="list-unstyled credentials">
+            <li class="mb-2 d-flex align-items-center justify-content-between">
+              <span> <strong>Nome de Usuário:</strong> <code>danilo</code> </span>
+              <button
+                class="copy-btn btn btn-sm btn-light"
+                (click)="copyToClipboard('danilo')"
+                aria-label="Copy User"
+              >
+                📋
+              </button>
+            </li>
+
+            <li class="mb-2 d-flex align-items-center justify-content-between">
+              <span> <strong>Senha:</strong> <code>*Demo123</code> </span>
+              <button
+                class="copy-btn btn btn-sm btn-light"
+                (click)="copyToClipboard('*Demo123')"
+                aria-label="Copy Password"
+              >
+                📋
+              </button>
+            </li>
+          </ul>
+
+          @if (copyMessage$ | async; as copyMessage) {
+            <div class="alert alert-success mt-3 py-2">
+              {{ copyMessage }}
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+</div>

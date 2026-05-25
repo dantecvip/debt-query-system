@@ -1,0 +1,140 @@
+@if (cliente) {
+  <div class="container mt-4">
+    <div class="mb-3">
+      <a [routerLink]="['/debitos/consulta']" class="btn btn-outline-secondary btn-sm">
+        ⬅️ Voltar para Consulta
+      </a>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-4 bg-light">
+      <div class="card-body">
+        <span class="text-muted text-uppercase small font-weight-bold">Cliente</span>
+        <h2 class="card-title text-primary mb-1">{{ cliente.nome }}</h2>
+        <p class="text-muted">
+          CPF:
+          <span class="text-dark font-weight-bold">{{ cliente.cpf | mask: '000.000.000-00' }}</span>
+        </p>
+        <p class="text-muted">
+          Email: <span class="text-dark font-weight-bold">{{ cliente.email }}</span>
+        </p>
+        <p class="text-muted">
+          Telefone: <span class="text-dark font-weight-bold">{{ cliente.telefone }}</span>
+        </p>
+        <hr />
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="h5 mb-0 text-secondary">Saldo Geral Original:</span>
+          <span class="h3 mb-0 text-danger font-weight-bold">
+            {{ cliente.valorOriginalTotal | currency: 'BRL' : 'R$ ' }}
+          </span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="h5 mb-0 text-secondary">Subtotal Geral com Taxas Administrativas:</span>
+          <span class="h3 mb-0 text-danger font-weight-bold">
+            {{ cliente.valorBaseAtualizadoTotal | currency: 'BRL' : 'R$ ' }}
+          </span>
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="h5 mb-0 text-secondary"
+            >Saldo Devedor Geral Atualizado:</span
+          >
+          <span class="h3 mb-0 text-danger font-weight-bold">
+            {{ cliente.valorTotalConsolidado | currency: 'BRL' : 'R$ ' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <h4 class="mb-3 text-secondary">Contratos e Dívidas Ativas</h4>
+
+    <div class="accordion" id="accordionDividas">
+      @for (divida of cliente.dividas; track divida.id; let i = $index) {
+        <div class="card mb-3 shadow-sm border">
+          <div
+            class="card-header bg-white d-flex flex-column flex-md-row justify-content-between align-items-md-center p-3 gap-3"
+          >
+            <div>
+              <span class="small text-muted">Descrição do Contrato</span>
+              <h5 class="mb-1 text-dark font-weight-bold">{{ divida.descricao }}</h5>
+            </div>
+
+            <div class="d-flex gap-4 text-center text-md-left flex-wrap">
+              <div>
+                <span class="text-muted small d-block">Total Original</span>
+                <span class="text-secondary font-weight-bold small">
+                  {{ divida.valorOriginalTotal | currency: 'BRL' : 'R$ ' }}
+                </span>
+              </div>
+
+              <div class="border-left pl-3">
+                <span class="text-muted small d-block">Subtotal</span>
+                <span class="text-dark font-weight-bold small">
+                  {{ divida.valorBaseAtualizadoTotal | currency: 'BRL' : 'R$ ' }}
+                </span>
+              </div>
+            </div>
+
+            <div class="text-md-end">
+              <span class="text-danger small d-block font-weight-bold">Total Contrato Devido Hoje</span>
+              <div class="h5 mb-0 text-danger font-weight-bold">
+                {{ divida.valorTotalDividaAtualizada | currency: 'BRL' : 'R$ ' }}
+              </div>
+            </div>
+          </div>
+
+          <div class="card-body bg-light border-top">
+            <h6 class="text-muted mb-3">Detalhamento das Parcelas</h6>
+            <div class="table-responsive">
+              <table class="table table-hover bg-white rounded shadow-sm mb-0">
+                <thead class="table-dark">
+                  <tr>
+                    <th scope="col" class="text-center">Parcela</th>
+                    <th scope="col">Data Vencimento</th>
+                    <th scope="col" class="text-end">Valor Original</th>
+                    <th scope="col" class="text-end">Dias Atraso</th>
+                    <th scope="col" class="text-end">Multa (2%)</th>
+                    <th scope="col" class="text-end">Juros de Mora</th>
+                    <th scope="col" class="text-end">Taxa Administrativa</th>
+                    <th scope="col" class="text-center">Total Devido Hoje</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (parcela of divida.parcelas; track parcela.id) {
+                    <tr
+                      [ngClass]="{
+                        'table-danger': parcela.diasAtraso > 30,
+                        'table-warning': parcela.diasAtraso > 0 && parcela.diasAtraso <= 30,
+                      }"
+                    >
+                      <td class="text-center font-weight-bold">{{ parcela.parcelaNumero }}</td>
+                      <td>{{ parcela.dataVencimento | date: 'dd/MM/yyyy' }}</td>
+                      <td class="text-end text-success font-weight-bold">
+                        {{ parcela.valorOriginal | currency: 'BRL' : 'R$ ' }}
+                      </td>
+                      <td class="text-end">{{ parcela.diasAtraso }} dia(s)</td>
+                      <td class="text-end text-danger">
+                        {{ parcela.valorMulta | currency: 'BRL' : 'R$ ' }}
+                      </td>
+                      <td class="text-end text-danger">
+                        {{ parcela.valorJuros | currency: 'BRL' : 'R$ ' }}
+                      </td>
+                      <td class="text-center text-primary font-weight-bold">
+                        {{ parcela.taxaAdministrativa | currency: 'BRL' : 'R$ ' }}
+                      </td>
+                      <td class="text-center text-primary font-weight-bold">
+                        {{ parcela.valorTotalAtualizado | currency: 'BRL' : 'R$ ' }}
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+} @else {
+  <div class="text-center spinner">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+}

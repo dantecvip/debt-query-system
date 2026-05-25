@@ -1,0 +1,86 @@
+<div class="container">
+<div class="row justify-content-center">
+  <div class="col-md-8 col-lg-6">
+    
+    <label for="cpfSearch" class="form-label text-muted small font-weight-bold text-uppercase mb-2 tracking-wide">
+      Identificação do Contribuinte
+    </label>
+
+    <div class="input-group shadow-sm rounded">
+      <span class="input-group-text bg-white border-right-0 text-muted">
+        🔍
+      </span>
+      <input
+        id="cpfSearch"
+        type="text"
+        class="form-control border-left-0 py-2"
+        [(ngModel)]="cpf"
+        mask="000.000.000-00"
+        placeholder="000.000.000-00"
+        (keyup.enter)="buscarDebitos()"
+      />
+      <button 
+        class="btn btn-primary px-4 font-weight-bold" 
+        type="button" 
+        (click)="buscarDebitos()">
+        Buscar Débitos
+      </button>
+    </div>
+
+    <div class="form-text text-muted mt-2 small">
+      Pressione <kbd>Enter</kbd> ou clique no botão para pesquisar.
+    </div>
+
+  </div>
+</div>
+
+@if (errorMessage) {
+  <div class="alert alert-danger">{{ errorMessage }}</div>
+}
+
+@if (isLoading) {
+  <div class="text-center spinner">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+} @else {
+  <div>
+    @if (produtos && produtos.length > 0) {
+      <table class="table table-striped table-hover text-center">
+        <thead>
+          <tr>
+            <th>Descrição</th>
+            <th>Saldo Geral Original</th>
+            <th>Subtotal Geral com Taxas Administrativas</th>
+            <th>Saldo Devedor Geral Atualizado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (produto of produtos; track produto.id) {
+            <tr>
+              <td>{{ produto.descricao }}</td>
+              <td>{{ produto.valorOriginalTotal | currency: 'BRL' : 'R$ ' }}</td>
+              <td>{{ produto.valorBaseAtualizadoTotal| currency: 'BRL' : 'R$ ' }}</td>
+              <td>{{ produto.valorTotalDividaAtualizada | currency: 'BRL' : 'R$ ' }}</td>
+              <td>
+                <button class="btn btn-success btn-sm" [routerLink]="['/debitos/detalhe', cpf]">
+                  <fa-icon [icon]="faEye"></fa-icon>
+                  Ver detalhes
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    } @else {
+      <div class="text-center py-5 bg-white rounded shadow-sm border mt-3">
+        <div class="display-4 text-muted mb-3">📋</div>
+        <h5 class="text-secondary font-weight-bold">Nenhum débito localizado</h5>
+        <p class="text-muted small mb-0">
+          Insira um CPF válido acima para realizar a busca na base de dados.
+        </p>
+      </div>
+    }
+  </div>
+}
+</div>

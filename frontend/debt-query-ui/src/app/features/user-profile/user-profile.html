@@ -1,0 +1,45 @@
+@if (user) {
+<div class="profile-page container py-5">
+
+  <div class="profile-wrapper mx-auto">
+
+    <div class="profile-header text-center">
+      <div class="avatar">
+        <fa-icon [icon]="faUser"></fa-icon>
+      </div>
+
+      <h1>Olá, {{ user.name }}</h1>
+
+      <p class="description">
+        Gerencie aqui suas informações de conta.
+      </p>
+    </div>
+
+    <div class="profile-card">
+
+      <div class="profile-item">
+        <span class="label">Nome</span>
+        <span class="value">{{ user.name }}</span>
+      </div>
+
+      <div class="profile-item">
+        <span class="label">Email</span>
+        <span class="value">{{ user.email }}</span>
+      </div>
+
+      <div class="profile-item">
+        <span class="label">Login</span>
+        <span class="value">{{ user.username }}</span>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+}
+@else {
+<div class="loading-container">
+  <app-loading-spinner></app-loading-spinner>
+</div>
+}

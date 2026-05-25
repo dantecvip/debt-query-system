@@ -1,0 +1,134 @@
+services:
+  frontend:
+    build:
+      context: ../frontend/debt-query-ui
+    ports:
+      - "4200:80"
+    environment:
+      API_URL: http://localhost:4555/api/v1
+      API_URL_PATTERN: "^(https:\\/\\/localhost:4555\\/api\\/v1)(\\/.*)?$"
+      KEYCLOAK_REALM: demo
+      KEYCLOAK_URL: http://localhost:4205
+      KEYCLOAK_CLIENT_ID: demo-api
+    restart: unless-stopped
+    networks:
+      - debt_system_network
+
+  dataseeder:
+    build:
+      context: ../backend
+      dockerfile: DebtQuerySystem/DebtQuerySystem.DataSeeder/Dockerfile
+    container_name: debt_query_seeder
+    entrypoint: ["dotnet", "DebtQuerySystem.DataSeeder.dll"]
+    environment:
+      DatabaseSettings__ConnectionString: Host=postgres;Port=5432;Database=debtquery;Username=postgres;Password=*Password123
+      ExcelConfiguration__FilePath: "/app/data/BASE CLIENTES_DIVIDAS.xlsx"
+    volumes:
+      - ./DebtQuerySystem.DataSeeder/Data/Seed:/app/data
+    networks:
+      - debt_system_network
+    depends_on:
+      postgres:
+        condition: service_healthy  
+  
+  api:
+    container_name: debt-query-system-api
+    build:
+      context: ../backend
+      dockerfile: DebtQuerySystem/DebtQuerySystem.Api/Dockerfile
+    ports:
+      - "4555:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      RUN_MIGRATIONS: "true"
+      DatabaseSettings__ConnectionString: Host=postgres;Port=5432;Database=debtquery;Username=postgres;Password=*Password123
+      CacheSettings__ConnectionString: redis:6379
+      CacheSettings__InstanceName: "DebtQuerySystem:"
+      CacheSettings__DefaultExpirationMinutes: 20
+      CorsSettings__Origins__0: http://127.0.0.1:4200
+      CorsSettings__Origins__1: http://frontend
+      CorsSettings__Origins__2: http://localhost:4200
+      KeycloakSettings__Authority: http://keycloak:8080/realms/demo
+      KeycloakSettings__Audience: account
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+      dataseeder:
+        condition: service_completed_successfully
+    restart: unless-stopped
+    networks:
+      - debt_system_network
+      
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.6
+    command: start-dev --import-realm --spi-theme--cache-themes=false --spi-theme--cache-templates=false
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: "*Password123"
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: "*Password123"
+      
+      KC_HOSTNAME_STRICT_BACKCHANNEL: false
+      KC_HTTP_ENABLED: true
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_HEALTH_ENABLED: true
+      
+      KC_SPI_THEME_CACHE_THEMES: false
+      KC_SPI_THEME_CACHE_TEMPLATES: false
+    ports:
+      - "4205:8080"
+    volumes:
+      - ./keycloak/themes:/opt/keycloak/themes
+      - ./keycloak/demo-realm.json:/opt/keycloak/data/import/demo-realm.json
+    networks:
+      - debt_system_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+  
+  postgres:
+    image: postgres:16
+    container_name: debt_system_postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "*Password123"
+    ports:
+      - "5545:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - debt_system_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: debt_system_redis
+    ports:
+      - "6385:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - debt_system_network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  debt_system_network:
+    driver: bridge
