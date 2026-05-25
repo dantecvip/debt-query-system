@@ -1,6 +1,17 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { appConfig } from './app/app.config';
-import { App } from './app/app';
 
-bootstrapApplication(App, appConfig)
-  .catch((err) => console.error(err));
+import { App } from './app/app';
+import { appConfig } from './app/app.config';
+
+import { AppConfigService } from './app/core/config/config.service';
+
+async function bootstrap() {
+  const configService = new AppConfigService();
+  await configService.loadConfig();
+
+  const config = appConfig(configService);
+
+  await bootstrapApplication(App, config);
+}
+
+bootstrap().catch((err) => console.error(err));

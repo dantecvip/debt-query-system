@@ -2,6 +2,12 @@ import { Injectable } from '@angular/core';
 
 export interface AppConfig {
   apiUrl: string;
+  apiPattern: string;
+  keycloakConfig: {
+    realm: string;
+    url: string;
+    clientId: string;
+  };
 }
 
 @Injectable({ providedIn: 'root' })
@@ -18,5 +24,13 @@ export class AppConfigService {
 
   get apiUrl(): string {
     return this.config.apiUrl;
+  }
+
+  get apiPattern(): string {
+    return this.config.apiPattern;
+  }
+
+  get keycloakConfig(): any {
+    return this.config.keycloakConfig;
   }
 }

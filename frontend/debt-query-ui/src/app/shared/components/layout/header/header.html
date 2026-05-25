@@ -21,7 +21,7 @@
                         <a routerLink="/" class="nav-link cursor-pointer">
                             <fa-icon [icon]="faHome"></fa-icon>Inicio</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" *kaHasRoles="['view-debts']" routerLinkActive="active">
                         <a routerLink="/debitos/consulta" class="nav-link cursor-pointer">
                             <fa-icon [icon]="faList"></fa-icon>
                             Débitos</a>
@@ -45,7 +45,7 @@
 
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
 
-                            <li>
+                            <li *kaHasRoles="['view-profile']">
                                 <a routerLink="/perfil" class="dropdown-item">
                                     <fa-icon [icon]="faList"></fa-icon>
                                     Perfil
