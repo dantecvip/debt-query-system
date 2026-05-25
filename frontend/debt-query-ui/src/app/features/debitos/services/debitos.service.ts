@@ -4,13 +4,14 @@ import { Observable } from 'rxjs';
 import { ClienteModel } from '../models/cliente.model';
 import { ClienteResumoModel } from '../models/cliente.resumo.model';
 import { AppConfigService } from '../../../core/config/config.service';
+import { APP_CONFIG } from '../../../core/config/config.token';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DebitoService {
   private readonly http = inject(HttpClient);
-  private readonly config = inject(AppConfigService);
+  private readonly config = inject(APP_CONFIG);
 
   obterResumoDebitosPorCpf(cpf: string): Observable<ClienteResumoModel> {
     const cpfLimpo = cpf.replace(/\D/g, ''); 
