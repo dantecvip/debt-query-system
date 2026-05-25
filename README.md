@@ -156,10 +156,10 @@ Abaixo estão os principais pilares arquiteturais que elevam a maturidade técni
 ```
 
 🏁 Como Rodar o Projeto Localmente
-Pró-requisitos
+Pré-requisitos
 Docker e Docker Compose instalados.
 
-A planilha `BASE CLIENTES_DIVIDAS.xlsx` deve estar presente no diretório `DebtQuerySystem.DataSeeder/Data/`.
+A planilha `BASE CLIENTES_DIVIDAS.xlsx` deve estar presente no diretório `docker/seed/`.
 
 Passo a Passo
 Clone o repositório:
