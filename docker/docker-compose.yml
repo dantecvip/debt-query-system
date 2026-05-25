@@ -6,6 +6,10 @@ services:
       - "4200:80"
     environment:
       API_URL: http://localhost:4555/api/v1
+      API_URL_PATTERN: "/^(https:\/\/localhost:4555\/api\/v1)(\/.*)?$/i"
+      KEYCLOAK_REALM: demo
+      KEYCLOAK_URL: http://keycloak:8080/realms/demo
+      KEYCLOAK_CLIENT_ID: demo-api
     restart: unless-stopped
     networks:
       - debt_system_network
@@ -45,7 +49,7 @@ services:
       CorsSettings__Origins__1: http://frontend
       CorsSettings__Origins__2: http://localhost:4200
       KeycloakSettings__Authority: http://keycloak:8080/realms/demo
-      KeycloakSettings__Audience: demo-api
+      KeycloakSettings__Audience: account
     depends_on:
       redis:
         condition: service_healthy
@@ -56,6 +60,35 @@ services:
     restart: unless-stopped
     networks:
       - debt_system_network
+      
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.6
+    command: start-dev --import-realm --spi-theme--cache-themes=false --spi-theme--cache-templates=false
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: "*Password123"
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: "*Password123"
+      
+      KC_HOSTNAME_STRICT_BACKCHANNEL: false
+      KC_HTTP_ENABLED: true
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_HEALTH_ENABLED: true
+      
+      KC_SPI_THEME_CACHE_THEMES: false
+      KC_SPI_THEME_CACHE_TEMPLATES: false
+    ports:
+      - "4205:8080"
+    volumes:
+      - ./keycloak/themes:/opt/keycloak/themes
+      - ./keycloak/demo-realm.json:/opt/keycloak/data/import/demo-realm.json
+    networks:
+      - debt_system_network
+    depends_on:
+      postgres:
+        condition: service_healthy
   
   postgres:
     image: postgres:16

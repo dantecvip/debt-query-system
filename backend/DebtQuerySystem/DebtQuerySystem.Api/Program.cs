@@ -8,6 +8,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddInfrastructure(builder.Configuration);
 CorsConfiguration.AddCorsConfiguration(builder);
 SerilogConfiguration.AddSerilogConfiguration(builder);
+AuthConfiguration.AddAuthConfiguration(builder);
 
 var app = builder.Build();
 
@@ -23,6 +24,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCorsConfiguration();
 app.UseSerilogConfiguration();
+app.UseAuthConfiguration();
 
 app.MapWeatherForecastEndpoints();
 app.MapDividasEndpoints();
