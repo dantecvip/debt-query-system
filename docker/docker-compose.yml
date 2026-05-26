@@ -13,6 +13,9 @@ services:
     restart: unless-stopped
     networks:
       - debt_system_network
+    depends_on:
+      keycloak:
+        condition: service_healthy
 
   dataseeder:
     build:
@@ -29,7 +32,7 @@ services:
       - debt_system_network
     depends_on:
       postgres:
-        condition: service_healthy  
+        condition: service_healthy
   
   api:
     container_name: debt-query-system-api
@@ -65,7 +68,7 @@ services:
       
   keycloak:
     image: quay.io/keycloak/keycloak:26.6
-    command: start-dev --import-realm --spi-theme--cache-themes=false --spi-theme--cache-templates=false
+    command: start-dev --import-realm --spi-theme-cache-themes=false --spi-theme-cache-templates=false
     environment:
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
@@ -88,6 +91,12 @@ services:
       - ./keycloak/demo-realm.json:/opt/keycloak/data/import/demo-realm.json
     networks:
       - debt_system_network
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'echo > /dev/tcp/127.0.0.1/9000'"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 60s
     depends_on:
       postgres:
         condition: service_healthy
