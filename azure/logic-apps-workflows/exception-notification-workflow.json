@@ -99,9 +99,9 @@
             "type": "Object",
             "value": {
                 "gmail": {
-                    "id": "/subscriptions/35462b92-705a-4f35-b4c3-f18d35698803/providers/Microsoft.Web/locations/brazilsoutheast/managedApis/gmail",
-                    "connectionId": "/subscriptions/35462b92-705a-4f35-b4c3-f18d35698803/resourceGroups/DesafioPaschoalotto/providers/Microsoft.Web/connections/gmail",
-                    "connectionName": "gmail",
+                    "id": "/subscriptions/35462b92-705a-4f35-b4c3-f18d35698803/providers/Microsoft.Web/locations/brazilsouth/managedApis/gmail",
+                    "connectionId": "/subscriptions/35462b92-705a-4f35-b4c3-f18d35698803/resourceGroups/DesafioPaschoalotto/providers/Microsoft.Web/connections/gmail-1",
+                    "connectionName": "gmail-1",
                     "connectionProperties": {}
                 }
             }

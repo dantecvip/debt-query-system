@@ -50,6 +50,8 @@ services:
       CorsSettings__Origins__2: http://localhost:4200
       KeycloakSettings__Authority: http://keycloak:8080/realms/demo
       KeycloakSettings__Audience: account
+      AzureIntegrationSettings__ExceptionLogicAppsHttpTrigger: "https://prod-15.brazilsouth.logic.azure.com:443/workflows/e9d26dedb50a43c6ad67369473595ad5/triggers/When_an_HTTP_request_is_received/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2FWhen_an_HTTP_request_is_received%2Frun&sv=1.0&sig=p_fdpa6YeEedhSgn-SjKRYT-FIqdCP1tz_kMEIWflhU"
+      AzureIntegrationSettings__ExceptionLogicAppsEmailDestination: daniloalves.tech@gmail.com
     depends_on:
       redis:
         condition: service_healthy
