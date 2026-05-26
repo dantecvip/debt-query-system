@@ -1,6 +1,8 @@
-﻿using System.Text.Json;
-using DebtQuerySystem.Infrastructure.Settings;
+﻿using DebtQuerySystem.Infrastructure.Settings;
 using Microsoft.Extensions.Options;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 
 namespace DebtQuerySystem.Api.Middlewares;
 
@@ -11,7 +13,6 @@ public class ExceptionMiddleware(
     IOptions<AzureIntegrationSettings> options)
 {
     private readonly RequestDelegate _next = next;
-    private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
     private readonly IWebHostEnvironment _env = env;
     private readonly AzureIntegrationSettings _settings = options.Value;
 
@@ -43,11 +44,20 @@ public class ExceptionMiddleware(
             statusCode
         };
 
+        JsonSerializerOptions jsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+
         try
         {
-            var httpClient = _httpClientFactory.CreateClient();
+            var httpClient = httpClientFactory.CreateClient();
+            httpClient.Timeout = TimeSpan.FromSeconds(15);
 
-            _ = httpClient.PostAsJsonAsync(_settings.ExceptionLogicAppsHttpTrigger, payload);
+            string jsonString = JsonSerializer.Serialize(payload, jsonOptions);
+
+            var httpContent = new StringContent(jsonString, Encoding.UTF8, "application/json");
+
+            httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            _ = await httpClient.PostAsync(_settings.ExceptionLogicAppsHttpTrigger, httpContent);
         }
         catch (Exception)
         {
@@ -66,7 +76,6 @@ public class ExceptionMiddleware(
             instance = context.Request.Path.Value
         };
 
-        JsonSerializerOptions jsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
         await context.Response.WriteAsync(JsonSerializer.Serialize(response, jsonOptions));
     }
 }
