@@ -1,0 +1,110 @@
+{
+    "definition": {
+        "metadata": {
+            "notes": {}
+        },
+        "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+        "contentVersion": "1.0.0.0",
+        "triggers": {
+            "When_an_HTTP_request_is_received": {
+                "type": "Request",
+                "kind": "Http",
+                "inputs": {
+                    "method": "POST",
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "service": {
+                                "type": "string"
+                            },
+                            "environment": {
+                                "type": "string"
+                            },
+                            "destinationEmail": {
+                                "type": "string"
+                            },
+                            "message": {
+                                "type": "string"
+                            },
+                            "stackTrace": {
+                                "type": "string"
+                            },
+                            "endpoint": {
+                                "type": "string"
+                            },
+                            "timestamp": {
+                                "type": "string"
+                            },
+                            "statusCode": {
+                                "type": "integer"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "actions": {
+            "Enviar_email_(V2)": {
+                "type": "ApiConnection",
+                "inputs": {
+                    "host": {
+                        "connection": {
+                            "name": "@parameters('$connections')['gmail']['connectionId']"
+                        }
+                    },
+                    "method": "post",
+                    "body": {
+                        "To": "@triggerBody()?['destinationEmail']",
+                        "Importance": "High",
+                        "Subject": "[ERROR] @{triggerBody()?['service']} - @{triggerBody()?['environment']}",
+                        "Body": "<p class=\"editor-paragraph\">&lt;h2&gt;Erro capturado na API&lt;/h2&gt;<br><br>&lt;p&gt;&lt;b&gt;Serviço:&lt;/b&gt; @{triggerBody()?['service']}&lt;/p&gt;<br>&lt;p&gt;&lt;b&gt;Ambiente:&lt;/b&gt; @{triggerBody()?['environment']}&lt;/p&gt;<br>&lt;p&gt;&lt;b&gt;Endpoint:&lt;/b&gt; @{triggerBody()?['endpoint']}&lt;/p&gt;<br>&lt;p&gt;&lt;b&gt;Status Code:&lt;/b&gt; @{triggerBody()?['statusCode']}&lt;/p&gt;<br>&lt;p&gt;&lt;b&gt;Timestamp:&lt;/b&gt; @{triggerBody()?['timestamp']}&lt;/p&gt;<br><br>&lt;h3&gt;Mensagem&lt;/h3&gt;<br>&lt;pre&gt;@{triggerBody()?['message']}&lt;/pre&gt;<br><br>&lt;h3&gt;Stack Trace&lt;/h3&gt;<br>&lt;pre&gt;@{triggerBody()?['stackTrace']}&lt;/pre&gt;</p>"
+                    },
+                    "path": "/v2/Mail"
+                },
+                "runAfter": {}
+            },
+            "Response": {
+                "type": "Response",
+                "kind": "Http",
+                "inputs": {
+                    "statusCode": 200,
+                    "body": {
+                        "success": true
+                    }
+                },
+                "runAfter": {
+                    "Enviar_email_(V2)": [
+                        "Succeeded"
+                    ]
+                }
+            }
+        },
+        "outputs": {},
+        "parameters": {
+            "Method_template": {
+                "defaultValue": "",
+                "type": "String"
+            },
+            "$connections": {
+                "type": "Object",
+                "defaultValue": {}
+            }
+        }
+    },
+    "parameters": {
+        "Method_template": {
+            "value": "GET"
+        },
+        "$connections": {
+            "type": "Object",
+            "value": {
+                "gmail": {
+                    "id": "/subscriptions/35462b92-705a-4f35-b4c3-f18d35698803/providers/Microsoft.Web/locations/brazilsoutheast/managedApis/gmail",
+                    "connectionId": "/subscriptions/35462b92-705a-4f35-b4c3-f18d35698803/resourceGroups/DesafioPaschoalotto/providers/Microsoft.Web/connections/gmail",
+                    "connectionName": "gmail",
+                    "connectionProperties": {}
+                }
+            }
+        }
+    }
+}

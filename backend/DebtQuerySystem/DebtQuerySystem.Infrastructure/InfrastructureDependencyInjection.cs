@@ -3,7 +3,6 @@ using DebtQuerySystem.Infrastructure.Database;
 using DebtQuerySystem.Infrastructure.Database.Repository;
 using DebtQuerySystem.Infrastructure.Services;
 using DebtQuerySystem.Infrastructure.Settings;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Configuration;
@@ -17,8 +16,6 @@ public static class InfrastructureDependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services,
         IConfiguration configuration)
     {
-        var cfg = configuration.GetSection(DatabaseSettings.SectionName);
-
         services.AddOptions<DatabaseSettings>().Bind(configuration.GetSection(DatabaseSettings.SectionName))
             .Validate(s => !string.IsNullOrWhiteSpace(s.ConnectionString),
                 "Connection string não configurada.")
@@ -27,6 +24,11 @@ public static class InfrastructureDependencyInjection
         services.AddOptions<CacheSettings>().Bind(configuration.GetSection(CacheSettings.SectionName))
             .Validate(s => !string.IsNullOrWhiteSpace(s.ConnectionString),
                 "Connection string não configurada.")
+            .ValidateOnStart();
+
+        services.AddOptions<AzureIntegrationSettings>().Bind(configuration.GetSection(AzureIntegrationSettings.SectionName))
+            .Validate(s => !string.IsNullOrWhiteSpace(s.ExceptionLogicAppsHttpTrigger) && !string.IsNullOrWhiteSpace(s.ExceptionLogicAppsEmailDestination),
+                "Faltam campos na configuração de integração com Azure.")
             .ValidateOnStart();
 
         services.AddDbContext<DebtQueryDbContext>((provider, options) =>
