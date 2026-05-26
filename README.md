@@ -192,13 +192,96 @@ Frontend (Angular): `http://localhost:4200`
 Backend API (Scalar): `http://localhost:4555/scalar/v1` (ou caminho correspondente)
 
 🔒 Segurança & Autenticação
+
 A aplicação está preparada para integração corporativa de identidade utilizando Keycloak.
 As rotas do backend são protegidas por tokens JWT emitidos pelo Keycloak, e o frontend realiza o fluxo de login via SSO.
 
+
 📝 Padrões de Código e Git
+
 Este projeto adota convenções rigorosas de mercado para manter a saúde e rastreabilidade do histórico:
 
 Conventional Commits: Mensagens de commit padronizadas (ex: `feat(debitos): ..., refactor(debitos): ..., chore(infra): ...`).
 
 Git Flow simplificado: Desenvolvimento baseado em branches de features com validação obrigatória via Pull Request.
 
+---
+
+### 🔬 Como Testar a Resiliência & Observabilidade (Simulação de Falha)
+
+Para validar o funcionamento de ponta a ponta do `ExceptionMiddleware` integrado ao **Azure Logic Apps** sem precisar quebrar o código-fonte, você pode simular uma queda de infraestrutura local:
+
+1. **Derrube o serviço de Cache (Redis):** Com o ecossistema rodando, execute o comando abaixo no terminal para parar o container do Redis:
+   ```bash
+   docker compose stop redis
+   ```
+
+2. **Disparando a falha:** Agora realize uma pesquisa de débitos por CPF no Frontend. A API interceptará a falha de conexão e o e-mail configurado no parâmetro `AzureIntegrationSettings__ExceptionLogicAppsEmailDestination` receberá o alerta detalhado do incidente quase instantaneamente através do Azure Logic Apps.
+
+---
+
+## ☁️ Próximos Passos: Roadmap de Migração para Azure
+
+Como o ecossistema foi projetado sob os princípios do *Twelve-Factor App*, uma transição transparente do ambiente local (`docker-compose`) para a nuvem pública (**Microsoft Azure**) é feita sem muito esforço. Abaixo está o planejamento estratégico de migração e a topologia alvo do ecossistema:
+
+```mermaid
+graph TD
+    %% Estilos Globais
+    classDef client fill:#f9f9f9,stroke:#333,stroke-width:2px,shape:stadium;
+    classDef azure fill:#0078d4,stroke:#005a9e,stroke-width:2px,color:#fff;
+    classDef security fill:#f25f22,stroke:#b8461b,stroke-width:2px,color:#fff;
+    classDef db fill:#00a4ef,stroke:#0078d4,stroke-width:2px,color:#fff;
+    classDef alert fill:#e81123,stroke:#a80000,stroke-width:2px,color:#fff;
+    classDef obs fill:#7fba00,stroke:#5f8a00,stroke-width:2px,color:#fff;
+
+    %% Nós do Fluxo
+    Cliente["💻 Cliente / Browser"]:::client
+    SWA["⚡ Azure Static Web Apps<br>(Frontend Angular 21)"]:::azure
+    Entra["🔐 Azure Entra ID<br>(Autenticação SPA/API)"]:::security
+    APIM["🛡️ Azure API Management (APIM)<br>(Gateway / JWT / Rate Limit)"]:::security
+    ACA["🚀 Azure Container Apps<br>(API .NET 10 + OpenTelemetry)"]:::azure
+    Redis["⚡ Azure Cache for Redis<br>(Camada de Cache)"]:::db
+    Postgres["🗄️ Azure DB for PostgreSQL<br>(Base de Dados Relacional)"]:::db
+    
+    %% Nós de Observabilidade
+    AppInsights["📊 Azure Application Insights<br>(APM / Tracing Distribuído)"]:::obs
+    LogicApps["⚙️ Azure Logic Apps<br>(Orquestrador de Alertas / Resiliência)"]:::alert
+    Email["📧 Destinatário Final<br>(E-mail / Notificação)"]:::client
+
+    %% Fluxo de Conexões
+    Cliente --> SWA
+    SWA <--> Entra
+    SWA --> APIM
+    APIM --> ACA
+    ACA --> Redis
+    ACA --> Postgres
+    
+    %% Fluxo de Telemetria e Observabilidade
+    SWA -.->|Métricas de Real User Monitoring| AppInsights
+    ACA -.->|Traces, Logs e Métricas via OTel| AppInsights
+    ACA -.->|Gatilho de Incidente Crítico| LogicApps
+    LogicApps -.->|Disparo Quase Instantâneo| Email
+ ```
+
+---
+
+### 1. Camada de Dados & Cache (A Base)
+* **Azure Database for PostgreSQL (Flexible Server):** Migração do banco de dados relacional para uma instância gerenciada de Servidor Flexível. Otimiza custos através de janelas de parada automática em ambientes de não-produção e garante alta disponibilidade para as consultas de débitos.
+* **Azure Cache for Redis:** Provisionamento do Redis em camada gerenciada para dar suporte imediato ao mecanismo distribuído de cache já implementado via `DistributedCacheService`, blindando a base de dados contra payloads repetitivos.
+
+### 2. Provedor de Identidade Corporativo (IAM)
+* **Azure Entra ID (antigo Azure AD):** Substituição do Keycloak local pelo serviço de identidade nativo da Azure. 
+  * Configuração de *App Registrations* apartados: um fluxo SPA com PKCE para o Frontend Angular 21 e exposição de escopos seguros (`scopes`) para a API .NET 10.
+  * Transição transparente no cliente através da biblioteca oficial `@azure/msal-angular`.
+
+### 3. Hospedagem Backend & Gateway de Segurança
+* **Azure Container Apps (ACA):** Implantação da imagem imutável da API backend. O ACA abstrai a complexidade do Kubernetes (K8s), oferecendo escalabilidade até o zero (*scale-to-zero*) para economia de recursos e gerenciamento nativo baseado em containers.
+* **Azure API Management (APIM):** API Gateway posicionado à frente do Container Apps. O APIM centraliza as regras de CORS, aplica políticas estritas de *Rate Limiting* e realiza o *offloading* da validação dos tokens JWT do Entra ID, garantindo que apenas requisições autenticadas atinjam a API.
+
+### 4. Distribuição do Frontend
+* **Azure Static Web Apps (SWA):** Hospedagem global do ecossistema Angular 21 via CDN com performance otimizada. A esteira de CI/CD integrada nativamente via GitHub Actions realiza o deploy estático, permitindo que a aplicação consuma as variáveis de ambiente em produção através das *Application Settings* do SWA e do arquivo `staticwebapp.config.json`.
+
+### 5. Observabilidade de Ponta a Ponta & Resiliência Assíncrona
+* **OpenTelemetry (OTel):** Instrumentação nativa e desacoplada inserida na API .NET 10. Coleta métricas de performance, logs estruturados e rastreamento distribuído (*Distributed Tracing*) de forma padronizada, eliminando o acoplamento do código com SDKs proprietários.
+* **Azure Application Insights:** Atua como o APM (Application Performance Management) central do ecossistema. Ele consolida os dados enviados via OpenTelemetry pela API e as métricas de navegação real do usuário (RUM) enviadas pelo Frontend Angular. Permite visualizar o mapa de aplicação, gargalos em queries do Postgres e rastrear requisições ponta a ponta.
+* **Azure Logic Apps:** Orquestrador de fluxos de trabalho que assume o papel de inteligência ativa para incidentes. Enquanto o Application Insights cuida do monitoramento geral e métricas frias, o `ExceptionMiddleware` da API utiliza o Logic Apps para disparar alertas críticos e reativos de queda de infraestrutura diretamente para os canais de comunicação, sem onerar a requisição do usuário.
