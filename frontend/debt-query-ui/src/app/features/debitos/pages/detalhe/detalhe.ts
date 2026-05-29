@@ -6,6 +6,7 @@ import { LoadingSpinner } from '../../../../shared/components/loading-spinner/lo
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgxMaskPipe, provideNgxMask } from 'ngx-mask';
 import { ClienteModel } from '../../models/cliente.model';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-detalhe',
@@ -18,17 +19,27 @@ export class Detalhe implements OnInit {
   private readonly route = inject(ActivatedRoute);
   protected debitoService = inject(DebitoService);
   protected cliente: ClienteModel | null = null;
+  isLoading = false;
+  errorMessage: string = "";
 
   ngOnInit(): void {
     const cpf = this.route.snapshot.paramMap.get('cpf');
     
     if (cpf) {
+      this.isLoading = true;
       this.debitoService.obterDebitosPorCpf(cpf).subscribe({
         next: (dados) => {
           console.log('Dados carregados com sucesso:', dados);
           this.cliente = dados;
-        },
-        error: (err) => console.error('Erro tratado pelo interceptor global:', err)
+          this.isLoading = false;
+        }, error: (error) => {
+          this.isLoading = false;
+          Swal.fire({
+            icon: 'error',
+            title: 'Erro',
+            text: error.error.title,
+          });
+        }
       });
     }
   }

@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { RouterModule } from '@angular/router';
 import { DividaResumoModel } from '../../models/divida.resumo.model';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-consulta',
@@ -25,16 +26,33 @@ export class Consulta {
   faEye = faEye;
 
   private refreshTable(callback: () => void) {
-    console.log('Iniciando busca por débitos para CPF:', this.cpf);
+    //console.log('Iniciando busca por débitos para CPF:', this.cpf);
+    if(this.cpf.trim() === "") {
+	  Swal.fire({
+        icon: 'error',
+        title: 'Erro',
+        text: "Por favor, insira um CPF válido.",
+      });
+      //this.errorMessage = "Por favor, insira um CPF válido.";
+      this.produtos = [];
+      return;
+    }
+
     this.isLoading = true;
     this.debitoService.obterResumoDebitosPorCpf(this.cpf).subscribe((data) => {
-      console.log('Resposta recebida do serviço:', data);
+      //console.log('Resposta recebida do serviço:', data);
       this.produtos = data.dividas;
-      console.log('Débitos carregados:', this.produtos);
+      //console.log('Débitos carregados:', this.produtos);
       callback();
     }, error => {
       this.isLoading = false;
-      this.errorMessage = error.error;
+      //this.errorMessage = error.error.title;
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro',
+        text: error.error.title,
+      });
+      this.produtos = [];
     });
   }
 

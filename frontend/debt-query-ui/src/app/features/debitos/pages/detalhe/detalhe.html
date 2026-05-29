@@ -1,3 +1,7 @@
+@if (errorMessage) {
+  <div class="alert alert-danger">{{ errorMessage }}</div>
+}
+
 @if (cliente) {
   <div class="container mt-4">
     <div class="mb-3">
@@ -133,7 +137,7 @@
       }
     </div>
   </div>
-} @else {
+} @else if (isLoading) {
   <div class="text-center spinner">
     <app-loading-spinner></app-loading-spinner>
   </div>
